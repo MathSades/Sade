@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VibePlayer - Seu Site de Música</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-compact-disc fa-spin"></i>
+                <h1>VibePlayer</h1>
+            </div>
+            <p>Sua trilha sonora, em qualquer lugar.</p>
+        </header>
+        
+        <main>
+            <section id="player-section" class="card">
+                <div class="now-playing">
+                    <div class="album-art">
+                        <i class="fas fa-music"></i>
+                    </div>
+                    <div class="song-info">
+                        <h2 id="current-title">Selecione uma música</h2>
+                        <p id="current-artist">Artista</p>
+                    </div>
+                </div>
+                
+                <div class="controls">
+                    <button id="prev-btn" title="Anterior"><i class="fas fa-step-backward"></i></button>
+                    <button id="play-btn" class="main-play" title="Reproduzir"><i class="fas fa-play"></i></button>
+                    <button id="next-btn" title="Próxima"><i class="fas fa-step-forward"></i></button>
+                </div>
+
+                <div class="progress-container">
+                    <span id="current-time">0:00</span>
+                    <input type="range" id="progress-bar" value="0" max="100">
+                    <span id="duration">0:00</span>
+                </div>
+            </section>
+
+            <section id="playlist-section" class="card">
+                <div class="section-header">
+                    <h2><i class="fas fa-list-ul"></i> Minha Playlist</h2>
+                </div>
+                <ul id="song-list"></ul>
+            </section>
+            
+            <section id="admin-section" class="card">
+                <button id="admin-btn" class="btn-outline">
+                    <i class="fas fa-user-shield"></i> Modo Administrador
+                </button>
+                
+                <div id="admin-form" class="hidden">
+                    <h3><i class="fas fa-plus-circle"></i> Adicionar Nova Música</h3>
+                    <form id="music-form">
+                        <div class="form-group">
+                            <label for="title">Título</label>
+                            <input type="text" id="title" placeholder="Ex: Bohemian Rhapsody" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="artist">Artista</label>
+                            <input type="text" id="artist" placeholder="Ex: Queen" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="src">URL do Áudio (MP3)</label>
+                            <input type="url" id="src" placeholder="https://exemplo.com/musica.mp3" required>
+                        </div>
+                        
+                        <button type="button" id="add-song" class="btn-primary">
+                            Adicionar à Playlist
+                        </button>
+                    </form>
+                </div>
+            </section>
+        </main>
+    </div>
+    
+    <audio id="audio-player"></audio>
+    <script src="script.js"></script>
+</body>
+</html>
