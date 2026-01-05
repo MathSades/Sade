@@ -150,6 +150,13 @@ header p {
     border: 4px solid rgba(255, 255, 255, 0.1);
 }
 
+.album-art img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    pointer-events: none;
+}
+
 .album-art.playing {
     animation: rotate 10s linear infinite;
 }
@@ -350,13 +357,6 @@ input[type="range"]::-webkit-slider-thumb {
     font-size: 1.2rem;
     flex-shrink: 0;
     overflow: hidden;
-}
-
-.album-art img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    pointer-events: none;
 }
 
 .song-details {
