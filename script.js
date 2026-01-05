@@ -7,7 +7,7 @@ const ADMIN_PASSWORD = 'admin123';
  * ==========================================
  */
 const defaultSongs = [
-    { title: 'Ourblues', artist: 'Math_Sades', src: 'https://www.dropbox.com/scl/fi/s781jps0giedhp9aexrns/S-es.mp3?rlkey=lxws1vsgp1iwe7cvljq4971w4&st=8vbvzf64?raw=1', cover: 'https://cdn2.suno.ai/b2484734-c948-4bbf-b809-e351a9b3c123.jpeg?width=360' },
+    { title: 'Ourblues', artist: 'Math_Sades', src: 'https://dl.dropboxusercontent.com/scl/fi/s781jps0giedhp9aexrns/S-es.mp3', cover: 'https://cdn2.suno.ai/b2484734-c948-4bbf-b809-e351a9b3c123.jpeg?width=360' },
     { title: 'Uni', artist: 'Math_Sades', src: 'https://docs.google.com/uc?export=download&id=1t-vgsyoN44RMgarKCZJuTBmx-GI5ZSSs', cover: 'https://cdn2.suno.ai/d8a48c10-9a30-48a4-b1ca-13baf0f9cfde.jpeg?width=360' },
     { title: 'Sães', artist: 'Math_Sades', src: 'https://www.dropbox.com/scl/fi/s781jps0giedhp9aexrns/S-es.mp3?rlkey=lxws1vsgp1iwe7cvljq4971w4&st=zjg2tcpu&dl=0', cover: 'https://cdn2.suno.ai/f996be58-9705-4b50-8ada-279e729d0d6f.jpeg?width=360' },
     { title: 'Alternativa Soe', artist: 'Math_Sades', src: 'Soe alternative.mp3', cover: 'https://cdn2.suno.ai/b4caa02d-1f28-459b-915e-2867304274cf.jpeg?width=360' },
