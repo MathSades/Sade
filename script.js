@@ -4,7 +4,6 @@ const ADMIN_PASSWORD = 'admin123';
  * ==========================================
  * ABAIXO: CONFIGURAÇÃO DE MÚSICAS PADRÃO
  * Você pode adicionar, remover ou alterar as músicas aqui.
- * Siga o formato: { title: '', artist: '', src: '', cover: '' }
  * ==========================================
  */
 const defaultSongs = [
@@ -39,11 +38,11 @@ const defaultSongs = [
     { title: 'Stage silentii', artist: 'Math_Sades', src: 'oah80-8kwma.mp3', cover: 'https://cdn2.suno.ai/1b9768dc-9c55-4296-ab64-a45f1b931ef4_8e2be4f4.jpeg?width=360' },
     { title: 'Final fluctus', artist: 'Math_Sades', src: 'nnowf-vlkys.mp3', cover: 'https://cdn2.suno.ai/5ded9084-4cec-4524-b2f2-cc3e6e3a9aca_5987be5a.jpeg?width=360' }
 ];
-/** ========================================== */
 
 let songs = JSON.parse(localStorage.getItem('songs')) || defaultSongs;
 let currentSongIndex = 0;
 let isPlaying = false;
+let filteredSongs = [];
 
 // DOM Elements
 const songList = document.getElementById('song-list');
@@ -60,20 +59,18 @@ const visualizer = document.getElementById('visualizer');
 const adminBtn = document.getElementById('admin-btn');
 const adminForm = document.getElementById('admin-form');
 const addSongBtn = document.getElementById('add-song');
+const searchInput = document.getElementById('search-input');
 
-function loadSong(index) {
-    const song = songs[index];
+function loadSongByIdx(idx) {
+    const song = songs[idx];
+    if (!song) return;
     audioPlayer.src = song.src;
     currentTitleEl.textContent = song.title;
     currentArtistEl.textContent = song.artist;
-    
-    // Update Cover
     visualizer.innerHTML = `<img src="${song.cover || 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=500&q=80'}" alt="Cover">`;
-    
-    renderPlaylist(); 
-    
+    renderPlaylist();
     if (isPlaying) {
-        audioPlayer.play().catch(e => console.log('Audio playback prevented by browser'));
+        audioPlayer.play().catch(e => console.log('Error playing audio'));
         visualizer.classList.add('playing');
     }
 }
@@ -93,21 +90,19 @@ function togglePlay() {
 
 function prevSong() {
     currentSongIndex = (currentSongIndex - 1 + songs.length) % songs.length;
-    loadSong(currentSongIndex);
+    loadSongByIdx(currentSongIndex);
 }
 
 function nextSong() {
     currentSongIndex = (currentSongIndex + 1) % songs.length;
-    loadSong(currentSongIndex);
+    loadSongByIdx(currentSongIndex);
 }
 
 function updateProgress(e) {
     const { duration, currentTime } = e.srcElement;
     if (isNaN(duration)) return;
-    
     const progressPercent = (currentTime / duration) * 100;
     progressBar.value = progressPercent;
-
     currentTimeEl.textContent = formatTime(currentTime);
     durationEl.textContent = formatTime(duration);
 }
@@ -128,10 +123,20 @@ function formatTime(time) {
 
 function renderPlaylist() {
     songList.innerHTML = '';
-    songs.forEach((song, index) => {
+    const query = searchInput.value.toLowerCase().trim();
+    filteredSongs = songs.filter(song => 
+        song.title.toLowerCase().includes(query) || 
+        song.artist.toLowerCase().includes(query)
+    );
+    const listToRender = query !== '' ? filteredSongs : songs;
+    if (listToRender.length === 0) {
+        songList.innerHTML = '<li style="justify-content: center; color: var(--text-slate);">Nenhum instrumental encontrado</li>';
+        return;
+    }
+    listToRender.forEach((song, index) => {
+        const isActive = songs[currentSongIndex] && songs[currentSongIndex].src === song.src;
         const li = document.createElement('li');
-        if (index === currentSongIndex) li.classList.add('active');
-        
+        if (isActive) li.classList.add('active');
         li.innerHTML = `
             <div class="list-art" style="background-image: url('${song.cover || ''}'); background-size: cover; background-position: center;">
                 ${!song.cover ? '<i class="fas fa-music"></i>' : ''}
@@ -140,61 +145,42 @@ function renderPlaylist() {
                 <h4>${song.title}</h4>
                 <p>${song.artist}</p>
             </div>
-            ${index === currentSongIndex && isPlaying ? 
-                '<i class="fas fa-volume-up play-icon-small"></i>' : 
-                '<i class="fas fa-play play-icon-small"></i>'}
+            ${isActive && isPlaying ? '<i class="fas fa-volume-up play-icon-small"></i>' : '<i class="fas fa-play play-icon-small"></i>'}
         `;
-        
         li.addEventListener('click', () => {
-            currentSongIndex = index;
+            currentSongIndex = songs.findIndex(s => s.src === song.src);
             isPlaying = true;
             playBtn.innerHTML = '<i class="fas fa-pause"></i>';
-            loadSong(currentSongIndex);
+            loadSongByIdx(currentSongIndex);
         });
-        
         songList.appendChild(li);
     });
 }
 
-// Admin
+searchInput.addEventListener('input', renderPlaylist);
 adminBtn.addEventListener('click', () => {
     const pass = prompt('Digite a senha de administrador:');
-    if (pass === ADMIN_PASSWORD) {
-        adminForm.classList.toggle('hidden');
-    } else if (pass !== null) {
-        alert('Senha incorreta!');
-    }
+    if (pass === ADMIN_PASSWORD) adminForm.classList.toggle('hidden');
+    else if (pass !== null) alert('Senha incorreta!');
 });
-
 addSongBtn.addEventListener('click', () => {
     const title = document.getElementById('title').value;
     const artist = document.getElementById('artist').value;
     const src = document.getElementById('src').value;
     const cover = document.getElementById('cover-url').value;
-
     if (title && artist && src) {
         songs.push({ title, artist, src, cover });
         localStorage.setItem('songs', JSON.stringify(songs));
         renderPlaylist();
-        
         document.getElementById('music-form').reset();
         alert('Faixa adicionada à biblioteca!');
-    } else {
-        alert('Por favor, preencha Título, Artista e URL da Música.');
-    }
+    } else alert('Por favor, preencha Título, Artista e URL da Música.');
 });
-
-// Controls
 playBtn.addEventListener('click', togglePlay);
 prevBtn.addEventListener('click', prevSong);
 nextBtn.addEventListener('click', nextSong);
 audioPlayer.addEventListener('timeupdate', updateProgress);
 audioPlayer.addEventListener('ended', nextSong);
 progressBar.addEventListener('input', setProgress);
-
-// Reset Playlist (Option for maintenance)
-// localStorage.removeItem('songs');
-
-// Init
 renderPlaylist();
-loadSong(currentSongIndex);
+loadSongByIdx(currentSongIndex);
